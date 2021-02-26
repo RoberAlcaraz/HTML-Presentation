@@ -17,10 +17,7 @@ output:
 In the following presentation we will do a simple analysis of the ``ThreeCars`` data set from the ``Stat2Data`` package.
 
 ```{r, echo=F}
-pacman::p_load(Stat2Data, knitr, plotly, dplyr)
-install.packages("ggplot2")
-library(ggplot2)
-library(patchwork)
+pacman::p_load(Stat2Data, knitr, plotly, dplyr, patchwork, ggplot2)
 # install_github("thomasp85/patchwork")
 ```
 
