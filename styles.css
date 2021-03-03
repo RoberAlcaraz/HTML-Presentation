@@ -1,3 +1,7 @@
 .reveal section p {
   color: darkred;
 }
+
+.reveal subsection p {
+  color: darkred;
+}
