@@ -1,0 +1,118 @@
+---
+title: "**Presentations in R with revealjs**"
+author: "*Roberto Jesús Alcaraz Molina*"
+date: "26/02/2021"
+output: 
+  revealjs::revealjs_presentation:
+    theme: serif
+    center: T
+    self_contained: false
+    highlight: kate
+    transition: convex
+    css: styles.css
+    reveal_options:
+      slideNumber: true
+---
+
+```{r, echo=F}
+pacman::p_load(Stat2Data, knitr, dplyr, patchwork, ggplot2, ggpubr, plotly, htmlwidgets)
+# install_github("thomasp85/patchwork")
+```
+
+# Stat2Data Package
+
+In the following presentation we will do a simple analysis of the ``ThreeCars`` data set from the ``Stat2Data`` package, which compare prices for Porsche, Jaguar, and BMW cars offered for sale at an internet site.
+
+Student project data collected from autotrader.com in Spring 2007.
+
+## Three Cars data set
+
+It is a data set with 90 observations on the following 8 variables:
+
+<ul>
+<li class="fragment fade-in" data-fragment-index="1">``CarType``: BMW, Jaguar, or Porsche.</li>
+<li class="fragment fade-in" data-fragment-index="2">``Price``: Asking price (in $1,000's).</li>
+<li class="fragment fade-in" data-fragment-index="3">``Age``: Age of the car (in years).</li>
+<li class="fragment fade-in" data-fragment-index="4">``Mileage``: Previous miles driven (in 1,000's).</li>
+<li class="fragment fade-in" data-fragment-index="5">``Car``: 0=Porsche, 1=Jaguar and 2=BMW. </li>
+<li class="fragment fade-in" data-fragment-index="6">``Porsche``: Indicator with 1=Porsche and 0=otherwise.</li>
+<li class="fragment fade-in" data-fragment-index="7">``Jaguar``: Indicator with 1=Jaguar and 0=otherwise.</li>
+<li class="fragment fade-in" data-fragment-index="8">``BMW``: Indicator with 1=BMW and 0=otherwise.</li>
+</ul>
+
+## Data frame description
+
+\bigskip
+```{r, echo=F}
+data("ThreeCars")
+kable(head(ThreeCars), caption = "First five observations in the data")
+```
+
+# Plots of the variables
+
+## Summary of the categorical variables
+
+```{r, echo=F}
+p1 = ggplot(data = ThreeCars, aes(x = CarType, y = Price, color = CarType)) +
+  geom_boxplot() +
+  theme_bw() +
+  theme(legend.position = "none")
+
+p2 = ggplot(data = ThreeCars, aes(x = CarType, y = Mileage, color = CarType)) +
+  geom_boxplot() +
+  theme_bw()
+
+ggarrange(p1, p2, ncol = 2, widths = c(1, 1.4))
+```
+
+## Summary of the the numerical variables
+
+```{r, echo=F}
+bw1 = ks::hpi(ThreeCars$Price)
+p1 = ggplot(data = ThreeCars, aes(x = Price)) +
+  geom_histogram(binwidth = bw1, fill = "blue", color = "black") +
+  theme_bw()
+
+bw2 = ks::hpi(ThreeCars$Age)
+p2 = ggplot(data = ThreeCars, aes(x = Age)) +
+  geom_histogram(binwidth = bw2, fill = "orange", color = "black") +
+  theme_bw()
+
+p1 + p2
+```
+
+# Some insights
+
+<ul>
+<li class="fragment fade-in" data-fragment-index="1">From the **boxplots**, we can observe that the Porches are the most expensive cars, whereas the Jaguars have the cheapest mean, despite having a long range of values. Also, the BMW are the ones that have more kilometers.</li>
+
+\bigskip
+<li class="fragment fade-in" data-fragment-index="2"> From the **histograms**, we can see that the the price is right-skewed but it may have two modes around 30\$ and 50\$. On the other hand, the majority of cars are below than 10 years.</li>
+</ul>
+
+# Finally, a simple regression
+
+We can make an interactive plot to see how related are the variables ``Price`` and ``Mileage``. As we may expect, as the km increases, the prices decreases.
+
+```{r, eval=F}
+fit <- lm(Price ~ Mileage, data = ThreeCars)
+```
+
+## 
+
+```{r, echo=F}
+fit <- lm(Price ~ Mileage, data = ThreeCars)
+
+p <- ThreeCars %>%
+  plot_ly(x = ~Mileage, color = ~CarType) %>%
+  add_markers(y = ~Price) %>%
+  add_lines(x = ~Mileage, y = fitted(fit))
+
+htmlwidgets::saveWidget(p,'plotly.html')
+knitr::include_url('plotly.html', height = "576px")
+```
+
+# THE END
+
+
+
