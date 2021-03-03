@@ -17,7 +17,7 @@ output:
 In the following presentation we will do a simple analysis of the ``ThreeCars`` data set from the ``Stat2Data`` package.
 
 ```{r, echo=F}
-pacman::p_load(Stat2Data, knitr, dplyr, patchwork, ggplot2)
+pacman::p_load(Stat2Data, knitr, dplyr, patchwork, ggplot2, ggpubr)
 # install_github("thomasp85/patchwork")
 ```
 
@@ -26,10 +26,19 @@ data("ThreeCars")
 kable(head(ThreeCars), caption = "First five observations in the data")
 ```
 
-## Summary of the the categorical variables
+# Summary of the the categorical variables
 
 ```{r, echo=F}
-# 
+p1 = ggplot(data = ThreeCars, aes(x = CarType, y = Price, color = CarType)) +
+  geom_boxplot() +
+  theme_bw() +
+  theme(legend.position = "none")
+
+p2 = ggplot(data = ThreeCars, aes(x = CarType, y = Mileage, color = CarType)) +
+  geom_boxplot() +
+  theme_bw()
+
+ggarrange(p1, p2, ncol = 2, widths = c(1, 1.4))
 ```
 
 ## Summary of the the numerical variables
